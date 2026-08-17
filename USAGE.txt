@@ -328,15 +328,6 @@ Install dependencies                  pip install requests
 
 
 ═══════════════════════════════════════════════════════════════════════════════
-SUPPORT
-═══════════════════════════════════════════════════════════════════════════════
-
-• GitHub: https://github.com/yourusername/subdomain-enumerator
-• Issues: https://github.com/yourusername/subdomain-enumerator/issues
-• Blog: [Link to your blog post]
-
-
-═══════════════════════════════════════════════════════════════════════════════
 VERSION INFORMATION
 ═══════════════════════════════════════════════════════════════════════════════
 
