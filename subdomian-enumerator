@@ -1,0 +1,131 @@
+import socket
+import requests
+import sys
+import threading
+
+found = []
+lock = threading.Lock()
+
+def load_wordlist(filename):
+    try:
+        with open(filename, "r") as f:
+            return [line.strip() for line in f if line.strip()]
+    except FileNotFoundError:
+        print(f"Error: {filename} not found!")
+        return []
+
+def resolve_domain(domain):
+    try:
+        return socket.gethostbyname(domain)
+    except socket.gaierror:
+        return None
+
+def check_http(domain):
+    for protocol in ["http", "https"]:
+        url = f"{protocol}://{domain}"
+        try:
+            response = requests.get(url, timeout = 3)
+            return protocol, response.status_code
+        except:
+            continue
+    return None, None
+
+def check_subdomain(target,sub):
+    full_domain = f"{sub}.{target}"
+    ip = resolve_domain(full_domain)
+
+    if ip:
+        protocol, status = check_http(full_domain)
+        lock.acquire()
+        if protocol:
+            print(f"[+] (full_domain) -> {ip} ({protocol}:// -> {status})")
+        else:
+            print(f"[+] {full_domain} -> {ip}")
+        found.append((full_domain, ip, protocol, status))
+        lock.release()
+
+def enumerate_subdomains(target,wordlist):
+    threads = []
+    for sub in wordlist:
+        thread = threading.Thread(target=check_subdomain, args=(target,sub))
+        threads.append(thread)
+        thread.start()
+
+    for thread in threads:
+        thread.join()
+
+def save_results(target):
+    filename = f"{target}_subdomains.txt"
+    with open(filename, "w") as f:
+        f.write(f"Subdomains found for {target}:\n")
+        f.write("="*40 + "\n\n")
+        for domain, ip, protocol, status in found:
+            if protocol:
+                f.write(f"{domain} -> {ip} ({protocol}:// -> {status})\n")
+            else:
+                f.write(f"{domain} -> {ip}\n")
+    print(f"\nResults saved to {filename}")
+
+def print_help():
+    print("""
+╔══════════════════════════════════════════════════════════════════════════╗
+║                      SUBDOMAIN ENUMERATOR                                ║
+║                    Find subdomains of a target domain                    ║
+╚══════════════════════════════════════════════════════════════════════════╝
+
+USAGE:
+    python3 subdomain_enum.py [OPTIONS] [TARGET] [WORDLIST]
+
+OPTIONS:
+    -h, --help     Show this help message
+    -v, --version  Show version information
+
+TARGET:
+    The domain to enumerate (e.g., example.com)
+
+WORDLIST:
+    Optional: Custom wordlist file (default: subdomains.txt)
+
+EXAMPLES:
+    python3 subdomain_enum.py example.com
+    python3 subdomain_enum.py example.com my_wordlist.txt
+
+VERSION:
+    1.0
+    """)
+
+def main():
+    if len(sys.argv) > 1 and sys.argv[1] in ["-h", "--help"]:
+        print_help()
+        return
+    if len(sys.argv) > 1 and sys.argv[1] in ["v", "--version"]:
+        print("Subdomain Enumerator v1.0")
+        return
+
+    if len(sys.argv) > 1:
+        target = sys.argv[1]
+    else: 
+        target = input("Enter target domain (e.g., example.com)")
+
+    if len(sys.argv) > 2:
+        wordlist_file = sys.argv[2]
+    else:
+        wordlist_file = "subdomains.txt"
+
+    wordlist = load_wordlist(wordlist_file)
+    if not wordlist:
+        print("No subdomains to check. Exiting.")
+        return
+
+    print(f"\nEnumerating subdomain for {target}...")
+    print(f"Using {len(wordlist)} subdomain names..\n")
+
+    enumerate_subdomains(target, wordlist)
+
+    print(f"\nFound {len(found)} subdomains")
+
+    if found:
+        save_results(target)
+
+if __name__ == "__main__":
+    main()
