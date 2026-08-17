@@ -1,0 +1,350 @@
+╔══════════════════════════════════════════════════════════════════════════╗
+║                                                                          ║
+║                      SUBDOMAIN ENUMERATOR                               ║
+║                    Find subdomains of a target domain                    ║
+║                                                                          ║
+║                      Version: 1.0                                       ║
+║                                                                          ║
+╚══════════════════════════════════════════════════════════════════════════╝
+
+
+═══════════════════════════════════════════════════════════════════════════════
+QUICK START
+═══════════════════════════════════════════════════════════════════════════════
+
+1. Install dependencies:
+   pip install requests
+
+2. Run the script:
+   python subdomain_enum.py
+
+3. Enter a target domain when prompted:
+   Enter target domain (e.g., example.com): example.com
+
+4. View your results!
+
+
+═══════════════════════════════════════════════════════════════════════════════
+USAGE METHODS
+═══════════════════════════════════════════════════════════════════════════════
+
+METHOD 1: Interactive Mode (Recommended for Beginners)
+───────────────────────────────────────────────────────────────────────────────
+
+Run without arguments, then enter a domain when prompted:
+
+    python subdomain_enum.py
+
+What happens:
+  • You'll be asked to enter a target domain
+  • The tool scans for subdomains using the default wordlist
+  • Results are displayed on screen
+  • Results are saved to a file
+
+Example:
+    $ python subdomain_enum.py
+    Enter target domain (e.g., example.com): example.com
+
+    Looking for file: subdomains.txt
+    Current directory: C:\Users\YourName\subdomain-enumerator
+    Read 45 lines from file
+    Found 45 valid subdomains
+
+    Enumerating subdomains for example.com...
+    Using 45 subdomain names...
+
+    [+] www.example.com → 93.184.216.34 (http:// → 200)
+    [+] mail.example.com → 93.184.216.34
+
+    Found 2 subdomains.
+
+    Results saved to example.com_subdomains.txt
+
+
+METHOD 2: Command-Line Mode (Fastest)
+───────────────────────────────────────────────────────────────────────────────
+
+Run with your target domain as an argument:
+
+    python subdomain_enum.py example.com
+
+What happens:
+  • Skips the prompt and scans immediately
+  • Same results as interactive mode
+
+Example:
+    $ python subdomain_enum.py example.com
+
+    Looking for file: subdomains.txt
+    Current directory: C:\Users\YourName\subdomain-enumerator
+    Read 45 lines from file
+    Found 45 valid subdomains
+
+    Enumerating subdomains for example.com...
+    Using 45 subdomain names...
+
+    [+] www.example.com → 93.184.216.34 (http:// → 200)
+    [+] mail.example.com → 93.184.216.34
+
+    Found 2 subdomains.
+
+    Results saved to example.com_subdomains.txt
+
+
+METHOD 3: Custom Wordlist
+───────────────────────────────────────────────────────────────────────────────
+
+Use your own wordlist file:
+
+    python subdomain_enum.py example.com my_wordlist.txt
+
+What happens:
+  • Uses your custom wordlist instead of the default
+  • Great for specific targets or larger wordlists
+
+Example:
+    $ python subdomain_enum.py example.com my_subdomains.txt
+
+
+METHOD 4: Help
+───────────────────────────────────────────────────────────────────────────────
+
+Show usage instructions:
+
+    python subdomain_enum.py --help
+
+Example:
+    $ python subdomain_enum.py --help
+
+    ╔══════════════════════════════════════════════════════════════════════════╗
+    ║                      SUBDOMAIN ENUMERATOR                              ║
+    ║                    Find subdomains of a target domain                   ║
+    ╚══════════════════════════════════════════════════════════════════════════╝
+
+    USAGE:
+        python subdomain_enum.py [OPTIONS] [TARGET] [WORDLIST]
+
+    OPTIONS:
+        -h, --help     Show this help message
+        -v, --version  Show version information
+
+    TARGET:
+        The domain to enumerate (e.g., example.com)
+
+    WORDLIST:
+        Optional: Custom wordlist file (default: subdomains.txt)
+
+    EXAMPLES:
+        python subdomain_enum.py example.com
+        python subdomain_enum.py example.com my_wordlist.txt
+
+
+METHOD 5: Version
+───────────────────────────────────────────────────────────────────────────────
+
+Show version information:
+
+    python subdomain_enum.py --version
+
+Example:
+    $ python subdomain_enum.py --version
+    Subdomain Enumerator v1.0
+
+
+═══════════════════════════════════════════════════════════════════════════════
+UNDERSTANDING YOUR RESULTS
+═══════════════════════════════════════════════════════════════════════════════
+
+What the output means:
+───────────────────────────────────────────────────────────────────────────────
+
+  [+] www.example.com → 93.184.216.34 (http:// → 200)
+
+  ┌────┬─────────────────────────────────────────────────────────────────────┐
+  │ [+] │ Subdomain found                                                   │
+  ├────┼─────────────────────────────────────────────────────────────────────┤
+  │ →   │ IP address the subdomain resolves to                              │
+  ├────┼─────────────────────────────────────────────────────────────────────┤
+  │ http│ Protocol used (HTTP or HTTPS)                                     │
+  ├────┼─────────────────────────────────────────────────────────────────────┤
+  │ 200 │ HTTP status code (200 = OK, 301 = Redirect, 404 = Not Found, etc.)│
+  └────┴─────────────────────────────────────────────────────────────────────┘
+
+HTTP Status Codes:
+───────────────────────────────────────────────────────────────────────────────
+
+  Code  Meaning
+  ────────────────────────────────────────────────────────────────────────────
+  200   OK — Website loaded successfully
+  301   Moved Permanently — Redirected to another URL
+  302   Found — Temporary redirect
+  400   Bad Request — The website is misconfigured
+  403   Forbidden — Access denied
+  404   Not Found — Page doesn't exist
+  500   Internal Server Error — Something broke on the server
+
+File Output:
+───────────────────────────────────────────────────────────────────────────────
+
+Results are saved to a file named:
+    {target}_subdomains.txt
+
+Example:
+    example.com_subdomains.txt
+
+File contents:
+    Subdomains found for example.com:
+    ========================================
+
+    www.example.com -> 93.184.216.34 (http:// -> 200)
+    mail.example.com -> 93.184.216.34
+
+
+═══════════════════════════════════════════════════════════════════════════════
+WARNING: Important Security Rule
+═══════════════════════════════════════════════════════════════════════════════
+
+⚠️  Only scan domains you own or have explicit permission to scan!
+⚠️  Unauthorized scanning is illegal and unethical!
+
+Safe Targets for Testing:
+───────────────────────────────────────────────────────────────────────────────
+
+  ✅ example.com      - Official example domain
+  ✅ example.org      - Official example domain
+  ✅ example.net      - Official example domain
+
+Unsafe Targets (DO NOT SCAN):
+───────────────────────────────────────────────────────────────────────────────
+
+  ❌ google.com       - You don't have permission
+  ❌ facebook.com     - You don't have permission
+  ❌ Any domain you don't own
+
+
+═══════════════════════════════════════════════════════════════════════════════
+TROUBLESHOOTING
+═══════════════════════════════════════════════════════════════════════════════
+
+ISSUE: "No subdomains to check. Exiting."
+───────────────────────────────────────────────────────────────────────────────
+
+  Solution:
+  1. Make sure subdomains.txt exists in the same folder
+  2. Make sure the file has content (not empty)
+  3. Check that the file is named exactly "subdomains.txt"
+
+  To create the file:
+  - Open a text editor (Notepad, VS Code, etc.)
+  - Add common subdomain names (one per line):
+    www
+    mail
+    admin
+    dev
+    api
+  - Save as "subdomains.txt" in your project folder
+
+ISSUE: "ModuleNotFoundError: No module named 'requests'"
+───────────────────────────────────────────────────────────────────────────────
+
+  Solution:
+  1. Install the requests library:
+     pip install requests
+
+  2. If pip doesn't work, try:
+     python -m pip install requests
+
+  3. If you're on Windows and get an error, run Command Prompt as Administrator
+
+ISSUE: "Error: subdomains.txt not found!"
+───────────────────────────────────────────────────────────────────────────────
+
+  Solution:
+  1. Create the file as described above
+  2. Make sure it's in the same folder as subdomain_enum.py
+  3. Check the file name (must be exactly "subdomains.txt")
+
+ISSUE: UnicodeEncodeError with arrow symbol (→)
+───────────────────────────────────────────────────────────────────────────────
+
+  Solution (Windows only):
+  The code already handles this automatically using UTF-8 encoding.
+  If you still get the error, the code uses "->" instead of "→" in the output.
+
+ISSUE: 'python' is not recognized as an internal or external command
+───────────────────────────────────────────────────────────────────────────────
+
+  Solution:
+  1. Python is not installed or not in your PATH
+  2. Install Python from python.org
+  3. Make sure to check "Add Python to PATH" during installation
+  4. Alternatively, use "py" instead of "python":
+     py subdomain_enum.py
+
+ISSUE: Permission denied
+───────────────────────────────────────────────────────────────────────────────
+
+  Solution:
+  1. Make sure you have write permissions in the folder
+  2. Run Command Prompt as Administrator
+  3. Try saving to a different folder
+
+
+═══════════════════════════════════════════════════════════════════════════════
+FILE REQUIREMENTS
+═══════════════════════════════════════════════════════════════════════════════
+
+Required Files:
+───────────────────────────────────────────────────────────────────────────────
+
+  subdomain_enum.py    - The main Python script
+  subdomains.txt       - The default wordlist
+
+Optional Files:
+───────────────────────────────────────────────────────────────────────────────
+
+  README.md            - Complete documentation
+  USAGE.txt            - This file (quick reference)
+  requirements.txt     - Python dependencies
+
+
+═══════════════════════════════════════════════════════════════════════════════
+COMMAND REFERENCE
+═══════════════════════════════════════════════════════════════════════════════
+
+Action                                  Command
+───────────────────────────────────────────────────────────────────────────────
+Run interactive                        python subdomain_enum.py
+
+Run with target                       python subdomain_enum.py example.com
+
+Run with custom wordlist              python subdomain_enum.py example.com mylist.txt
+
+Show help                             python subdomain_enum.py --help
+
+Show version                          python subdomain_enum.py --version
+
+Install dependencies                  pip install requests
+
+
+═══════════════════════════════════════════════════════════════════════════════
+SUPPORT
+═══════════════════════════════════════════════════════════════════════════════
+
+• GitHub: https://github.com/yourusername/subdomain-enumerator
+• Issues: https://github.com/yourusername/subdomain-enumerator/issues
+• Blog: [Link to your blog post]
+
+
+═══════════════════════════════════════════════════════════════════════════════
+VERSION INFORMATION
+═══════════════════════════════════════════════════════════════════════════════
+
+Version:     1.0
+Python:      3.6+
+Dependencies: requests
+
+Last Updated: August 2026
+
+
+═══════════════════════════════════════════════════════════════════════════════
